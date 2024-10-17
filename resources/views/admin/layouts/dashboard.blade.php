@@ -13,12 +13,12 @@
 <body class="font-inter bg-white"><!-- sidebar -->
     <div id='menu-dashboard' class="fixed left-0 top-0 w-56 h-full bg-black p-2">
         <div class="flex flex-col rounded-lg h-full">
-            <div class="flex flex-col justify-between px-1 border-2 border-yellow-200 rounded-lg h-full">
+            <div class="flex flex-col justify-between px-1 border-2 border-white rounded-lg h-full">
                 <ul class="flex flex-col flex-grow" style="justify-content: space-between;">
                     <li>
                         <ul>
-                            <li class="border-b-2 pb-3 border-yellow-200">
-                                <img class="pt-3" itemprop="logo" src="//theme.hstatic.net/200000117693/1001219415/14/logo.png?v=1169" alt="AB BEAUTY WORLD" class="img-responsive logoimg ">
+                            <li class="border-b-2 pb-3 border-white">
+                                <img class="pt-3" itemprop="logo" src="https://lungtungstudio.com/cdn/shop/files/Untitled-3_06b59ba8-dad9-407d-874b-498acee2666c.png?v=1726115723&width=450" alt="AB BEAUTY WORLD" class="img-responsive logoimg ">
                             </li>
                             <li class="mb-1 mt-3">
                                 <a href="{{ route('admin.pages.dashboard')}}" class="text-slate-500 block px-3 py-2 font-semibold rounded-lg hover:text-white hover:bg-slate-800"><i class=" fa-solid fa-gauge"></i><span class="pl-2">Dashboard</span></a href=" #">
@@ -42,13 +42,13 @@
                     </li>
                 </ul>
                 <ul>
-                    <li class="mb-1 border-t-2 border-yellow-200">
-                        @if(session()->has('user'))
+                    <li class="mb-1 border-t-2 border-white">
+                        {{-- @if(session()->has('user'))
                         <div class="text-center pt-3 uppercase font-semibold text-yellow-500">{{ session('user')->name }}</div>
-                        @endif
+                        @endif --}}
                         <form action="{{ route('logout')}}" method="POST">
                             @csrf
-                            <button type="submit" class="text-yellow-500 w-[100%] block px-3 py-2 font-semibold rounded-lg hover:text-white hover:bg-slate-800 my-2">
+                            <button type="submit" class="text-white w-[100%] block px-3 py-2 font-semibold rounded-lg hover:text-white hover:bg-slate-800 my-2">
                                 <i class="fa-solid fa-lock"></i><span class="pl-2">Logout</span>
                             </button>
                         </form>

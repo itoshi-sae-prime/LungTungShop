@@ -41,7 +41,7 @@ Route::get('/cart', [PageController::class, 'CartPage'])->name('pages.cart');
 Route::post('/add-to-cart', [CartController::class, 'addToCart'])->name('Addtocart');
 Route::get('/remove-from-cart/{id}/{color}/{size}', [CartController::class, 'deletetoCart'])->name('Deletetocart');
 Route::get('/post', [PageController::class, 'Post']);
-Route::post('/update-cart', [CartController::class, 'updateCart']);
+Route::post('/update-cart', [CartController::class, 'updateCart'])->name('update-cart');
 Route::post('/send-mail', [MailController::class, 'sendMail'])->name('send.mail');
 Route::get('/checkout', [PageController::class, 'CheckoutPage'])->name('checkout');
 //////////////////////////////

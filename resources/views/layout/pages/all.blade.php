@@ -8,9 +8,9 @@
 <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 @endsection
 @section('content')
-<div class="flex justify-center">
+<div class="flex justify-center pb-3">
     <div class="container">
-        <div class="flex justify-between items-center" style="padding: 30px 65px 15px 65px">
+        <div class="flex justify-between items-center" style="padding: 30px 55px 15px 55px">
             <div class="font-bold text-3xl font-serif tracking-wide">All Product</div>
             <div class="">
                 <select id="choose" style="width:200px !important; height: 40px !important; outline:none !important">
@@ -21,7 +21,7 @@
                 </select>
             </div>
         </div>
-        <div class="gap-x-4 text-white w-full flex justify-center pt-4 pb-8">
+        <div class="gap-x-4 text-white w-full flex justify-center pt-4 pb-3">
             <div class="relative z-50 lg:block hidden ">
                 <ul class="grid gap-2 bg-white p-2 rounded-lg shadow-lg" style="max-width: 230px;left:25px">
                     <li class="grid justify-center pb-[20px] border-b-2">
@@ -68,7 +68,7 @@
                     <div class="card-body text-center p-4 text-black">
                         <h5 class="card-name text-xl font-semibold mb-2" name="name">{{$data['name']}}</h5>
                         @if(is_numeric($data['price']))
-                        <p class="card-price text-lg text-gray-500 mb-4" name="price">${{number_format($data['price'], 2)}}</p>
+                        <p class="card-price text-lg text-gray-500 mb-4 font-semibold" name="price">{{number_format($data['price'], 3)}}<small>đ</small></p>
                         @else
                         <p class="card-price text-lg text-gray-500 mb-4" name="price">Price not available</p>
 
@@ -89,6 +89,20 @@
                     </div>
                 </div>
                 @endforeach
+            </div>
+        </div>
+        <div class="flex justify-center items-center my-5 lg:justify-end" style="padding: 0px 55px 50px 55px">
+            <div class="px-4 py-2 mx-1 border-2 border-blue-500 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition duration-300 ease-in-out cursor-pointer">
+                1
+            </div>
+            <div class="px-4 py-2 mx-1 border-2 border-blue-500 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition duration-300 ease-in-out cursor-pointer">
+                2
+            </div>
+            <div class="px-4 py-2 mx-1 border-2 border-blue-500 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition duration-300 ease-in-out cursor-pointer">
+                3
+            </div>
+            <div class="px-4 py-2 mx-1 border-2 border-blue-500 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition duration-300 ease-in-out cursor-pointer">
+                4
             </div>
         </div>
     </div>

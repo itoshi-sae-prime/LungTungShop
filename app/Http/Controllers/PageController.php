@@ -42,18 +42,14 @@ class PageController extends Controller
     {
         $response = Http::get('http://localhost:3000/api/data');
         if ($response->successful()) {
-            // Lấy dữ liệu từ API
             $data = $response->json();
 
-            // Lấy giá trị của tham số category
+
             $category = $request->input('category');
             $search = $request->input('search');
-            // Nếu category là "all", không lọc
             if (($category == 'all' || !$category) && !$search) {
-                // Không cần lọc, trả về toàn bộ dữ liệu
             } elseif ($category || $search) {
                 $data = array_filter($data, function ($item) use ($category, $search) {
-                    // Kiểm tra nếu category hợp lệ
                     $matchCategory = !$category || $category == 'all' || stripos($item['name'], $category) !== false;
 
                     // Kiểm tra nếu search hợp lệ
@@ -120,6 +116,11 @@ class PageController extends Controller
     }
     public function CheckoutPage()
     {
-        return view('layout.checkout');
+        $cart = session()->get('cart', []);
+        $total = 0;
+        foreach ($cart as $item) {
+            $total += ($item['price'] ?? 0) * ($item['quantity'] ?? 1); // Kiểm tra nếu có giá và số lượng, nếu không gán giá trị mặc định
+        }
+        return view('layout.checkout', ['cart' =>  $cart, 'total_main' => $total]);
     }
 }

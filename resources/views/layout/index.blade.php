@@ -23,8 +23,8 @@
 <body class="font-inter bg-white max-h-[90vh] h-auto">
 
     <div id="overlay"></div> <!-- Overlay element -->
-
-    <div class="flex justify-between items-center p-5 bg-white shadow-lg " style="z-index: 99;">
+<div class="shadow-2xl ">
+    <div class="flex justify-between items-center p-5 bg-white border-b-2" style="z-index: 99;">
 
         <div class="block md:hidden">
             <ul class="flex mt-2" style="column-gap: 1.5rem">
@@ -36,7 +36,7 @@
             </ul>
         </div>
 
-        <div class="font-bold text-4xl sm:text-2xl tracking-[3px]">
+        <div class="font-bold text-xl lg:text-4xl sm:text-2xl tracking-[3px]">
             <a class="tracking-[3px]" href="{{route('pages.home')}}">
                 LUNGTUNGstudio
             </a>
@@ -50,9 +50,9 @@
                 <li class="text-md font-bold uppercase">
                     <a class="tracking-[3px]" href="{{route('all.search')}}">Shop</a>
                 </li>
-                <li class="text-md font-bold uppercase">
+                {{-- <li class="text-md font-bold uppercase">
                     <a class="tracking-[3px]" href="{{route('pages.kid')}}">Collection</a>
-                </li>
+                </li> --}}
                 <li class="text-md font-bold uppercase flex items-stretch">
                     <a class="tracking-[3px]" href="{{route('pages.contact')}}">Contact</a>
                 </li>
@@ -93,8 +93,10 @@
             </div>
         </div>
     </div>
+</div>
+   
 
-    <div class="bg-slate-100">
+    <div class="bg-slate-100 max-h-[90%] h-[full]">
         @yield('content')
     </div>
 

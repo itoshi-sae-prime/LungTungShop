@@ -21,13 +21,14 @@ class CartController extends Controller
         ];
         $uniqueKey = $product['id'] . '-' . $product['color'] . '-' . $product['size'];
         $cart = session()->get('cart', []);
+
         if (isset($cart[$uniqueKey])) {
-            $cart[$uniqueKey]['quantity'] += 1;
+            $cart[$uniqueKey]['quantity'] += $product['quantity'];
         } else {
             $cart[$uniqueKey] = $product;
         }
         session()->put('cart', $cart);
-        if ($action === 'buy') {
+        if ($action == 'buy') {
             return redirect()->route('pages.cart')->with('success', 'Proceeding to checkout!');
         } else {
             return redirect()->back()->with('success', 'Product added to cart successfully!');
@@ -50,21 +51,18 @@ class CartController extends Controller
         // Quay lại trang trước và thông báo thành công
         return redirect()->back()->with('success', 'Product deleted from cart successfully!');
     }
-    // CartController.php
     public function updateCart(Request $request)
     {
-        $productId = $request->input('id');
-        $quantity = $request->input('quantity');
+        $cart = session()->get('cart', []);
 
-        // Tìm sản phẩm trong giỏ hàng và cập nhật số lượng
-        $cart = session()->get('cart');
-        if (isset($cart[$productId])) {
-            $cart[$productId]['quantity'] = $quantity;
-            session()->put('cart', $cart);
-
-            return response()->json(['success' => true]);
+        if (isset($cart[$request->id])) {
+            $cart[$request->id]['quantity'] = $request->quantity;
+            session()->put('cart', $cart); // Cập nhật lại session giỏ hàng
         }
 
-        return response()->json(['success' => false]);
+        return response()->json([
+            'success' => true,
+            'cart' => $cart,
+        ]);
     }
 }

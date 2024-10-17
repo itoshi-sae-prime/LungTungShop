@@ -249,6 +249,8 @@ input[type="file"] #file-upload-button {
 .item-pic {
     /* Đặt kích thước của phần tử */
     height: 100vw;
+
+    max-height: 900px;
     /* Đặt chiều cao cho phần tử */
     background-position: center bottom;
     /* Lấy phần dưới của ảnh */

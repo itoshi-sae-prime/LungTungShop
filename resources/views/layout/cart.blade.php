@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <script src="https://kit.fontawesome.com/6ef99526a1.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 
 @section('content')
@@ -49,21 +50,19 @@
                             <img src="{{$item['img']}}" alt="Product Image" class="w-16 h-16 rounded-lg">
                             <div class="ml-4">
                                 <h3 class="text-lg font-semibold">{{ $item['name'] }}</h3>
-                                <p class="text-gray-600">Price: {{ $item['price'] }}</p>
-                                <p class="text-gray-600">Color: {{ $item['color'] }}</p>
-                                <p class="text-gray-600">Size: {{ $item['size'] }}</p>
+                                <p id="price" class="text-gray-600" data-price="{{ $item['price'] }}">{{ $item['price'] }}</p>
+                                <p id="color" class="text-gray-600" data-price="{{ $item['color'] }}>{{ $item['color'] }}</p>
+                                <p class="text-gray-600">{{ $item['size'] }}</p>
                             </div>
                         </div>
 
                         <!-- Điều chỉnh số lượng -->
                         <div class="flex items-center gap-x-3 border-2">
                             <button class="px-2 text-xl border-2 bg-slate-300" onclick="decreaseQuantity({{ $item['id'] }})">-</button>
-                            <span id="quantity-{{ $item['id'] }}" class="text-sm font-medium text-gray-700">{{ $item['quantity'] }}</span>
+                            <span id="quantity-{{ $item['id'] }}"  class="text-sm font-medium text-gray-700" data-quantity="{{ $item['quantity']}}">{{ $item['quantity'] }}</span>
                             <button class="px-2 text-xl border-2 bg-slate-300" onclick="increaseQuantity({{ $item['id'] }})">+</button>
                         </div>
-
-                        <!-- Tổng giá tiền cho sản phẩm -->
-                        <span class="text-lg font-semibold">${{ ($item['price'] ?? 0) * ($item['quantity'] ?? 1) }}</span>
+                        <span id="total-price-{{ $item['id'] }}" class="text-lg font-semibold"> ${{ ($item['price'] ?? 0) * ($item['quantity'] ?? 1) }}</span>
 
                         <!-- Nút xóa sản phẩm -->
                         <button onclick="window.location.href='{{ route('Deletetocart', ['id' => $item['id'], 'color' => $item['color'] ?? 'default-color', 'size' => $item['size'] ?? 'default-size']) }}'" class="text-red-500 hover:text-red-600 ml-4">
@@ -89,7 +88,7 @@
                     <h3 class="text-xl font-semibold mb-4">Cart Summary</h3>
                     <div class="flex justify-between text-lg font-medium mb-4">
                         <span>Total:</span>
-                        <span>${{ $total }}</span>
+                        <span id="total">${{ $total }}</span>
                     </div>
                     @csrf
                     <button onclick="window.location='{{ route('checkout') }}'" class="w-full bg-indigo-600 text-white font-semibold py-3 rounded-lg shadow hover:bg-indigo-700">
@@ -97,66 +96,87 @@
                     </button>
                 </div>
             </div>
+            <?php
+            session()->put('cart', $cart);
+            ?>
         </div>
     </div>
 </div>
 
 <script>
-    function decreaseQuantity(itemId) {
-        var quantityElement = document.getElementById('quantity-' + itemId);
-        var currentQuantity = parseInt(quantityElement.innerText);
+    function decreaseQuantity(productId) {
+        var quantityElement = document.getElementById('quantity-' + productId);
+        var currentQuantity = parseInt(quantityElement.getAttribute('data-quantity'));
+        var priceElement = document.getElementById('price');
+        var currentPrice = parseInt(priceElement.getAttribute('data-price'));
 
         if (currentQuantity > 1) {
-            currentQuantity--;
-            quantityElement.innerText = currentQuantity;
+            var newQuantity = currentQuantity - 1;
+            quantityElement.setAttribute('data-quantity', newQuantity);
+            quantityElement.innerHTML = newQuantity;
 
-        }
-        console.log(itemId, currentQuantity);
-        updateCart(itemId, currentQuantity);
+            var totalPriceElement = document.getElementById('total-price-' + productId);
+            totalPriceElement.innerHTML = `$${(currentPrice * newQuantity)}`;
+
+            updateCart(productId, newQuantity); // Cập nhật lại giỏ hàng trong session
+            calculateTotalPrice();
+    }   
     }
+    function increaseQuantity(productId) {
+        var quantityElement = document.getElementById('quantity-' + productId);
+        var currentQuantity = parseInt(quantityElement.getAttribute('data-quantity'));
+        var newQuantity = currentQuantity + 1;
 
-    function increaseQuantity(itemId) {
-        var quantityElement = document.getElementById('quantity-' + itemId);
-        var currentQuantity = parseInt(quantityElement.innerText);
+        var priceElement = document.getElementById('price');
+        var currentPrice = parseInt(priceElement.getAttribute('data-price'));
 
-        currentQuantity++;
-        quantityElement.innerText = currentQuantity;
-        console.log(itemId, currentQuantity);
-        console.log(updateCart(itemId, currentQuantity));
+        quantityElement.setAttribute('data-quantity', newQuantity);
+        quantityElement.innerHTML = newQuantity;
+
+        var totalPriceElement = document.getElementById('total-price-' + productId);
+        totalPriceElement.innerHTML = `$${(currentPrice * newQuantity)}`;
+        console.log(productId, newQuantity);
+        updateCart(productId, newQuantity); // Cập nhật lại giỏ hàng trong session
+        calculateTotalPrice();
     }
-
-    function updateCart(itemId, quantity) {
-        // Kiểm tra nếu số lượng là hợp lệ
-        if (quantity < 0) {
-            alert("Quantity cannot be less than 0.");
-            return;
-        }
-        // Gửi yêu cầu AJAX để cập nhật giỏ hàng
+    
+    function updateCart(productId, newQuantity) {
+        
         fetch(`/update-cart`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // CSRF protection in Laravel
-                },
-                body: JSON.stringify({
-                    id: itemId, // ID of the item being updated
-                    quantity: quantity // New quantity
-                })
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                id: productId,
+                quantity: newQuantity
             })
-            .then(response => response.json()) // Parse the JSON response
-            .then(data => {
-                if (data.success) {
-                    console.log(data); // Log the returned data for debugging
-                    // Update the UI with the new quantity
-                    document.getElementById(`quantity-${itemId}`).innerText = quantity;
-                    console.log(quantity);
-                } else {
-                    alert('Failed to update the cart.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                var quantityElement = document.getElementById('quantity-' + productId);
+                quantityElement.innerHTML = newQuantity;
+                var totalPriceElement = document.getElementById('total-price-' + productId);
+                totalPriceElement.innerHTML = `$${(data.cart[productId].price * newQuantity).toFixed(2)}`;
+                calculateTotalPrice();
+            } else {
+                alert('Failed to update the cart.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+        console.log(totalPriceElement);
     }
+    function calculateTotalPrice() {
+        let total = 0;
+        document.querySelectorAll('[id^="total-price-"]').forEach(function(item) {
+            let itemPrice = parseFloat(item.innerHTML.replace('$', ''));
+            total += itemPrice;
+        });
+        document.getElementById('total').innerHTML = `$${total}`;
+    } 
 </script>
 @endsection

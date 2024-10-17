@@ -12,8 +12,8 @@
     <div class="slide relative w-auto h-auto">
         <div class="list flex">
             @foreach($data as $product)
-            <div class="item">
-                <img class="w-full h-full object-cover item-pic" style="object-position: center;" src="{{ $product->path }}" alt="Image">
+            <div class="item h-full max-h-[900px]"> <!-- Ensure the child div takes full height -->
+                <img class="w-full h-full object-cover" src="{{ $product->path }}" alt="Image">
             </div>
             @endforeach
         </div>
